@@ -1,0 +1,8 @@
+{
+    "name": "websitescrapper",
+    "version": "0.1",
+    "description": "Website Scrapper PhpMyAdmin Theme",
+    "author": "David Janitzek",
+    "url": "https://www.phpmyadmin.net/",
+    "supports": ["5.2.1"]
+}

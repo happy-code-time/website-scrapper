@@ -1,0 +1,11 @@
+
+{
+    "pythonVersion": "3.11",
+    "include": [
+        "**/scrapper/"
+    ],
+    "exclude": [
+        "**/node_modules/",
+        "**/__pycache__"
+    ],
+}

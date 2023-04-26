@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+
+    container_python:
+        container_name: ${PROJECT_NAME}_python
+        image: python:3.9
+        build: docker/python
+        volumes: 
+          - ./app:/tmp
+
+    container_db:
+        container_name: ${PROJECT_NAME}_database
+        image: mariadb:10.11.2
+        environment:
+            - MYSQL_ROOT_PASSWORD=website_scrapper
+        volumes: 
+            - database_website_scrapper:/var/lib/mysql
+            - ./docker/db/0.sql:/docker-entrypoint-initdb.d/0.sql
+        ports:
+            - 8881:3306
+
+    phpadmin:
+        container_name: ${PROJECT_NAME}_phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        ports:
+            - 8882:80
+        environment:
+            - PMA_ARBITRARY=1
+            - MEMORY_LIMIT=4G
+            - HIDE_PHP_VERSION=true
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=website_scrapper
+            - PMA_PORT=8881
+        volumes:
+            - ./docker/phpmyadmin/websitescrapper:/var/www/html/themes/websitescrapper
+            - ./docker/phpmyadmin/config.user.inc.php :/etc/phpmyadmin/config.user.inc.php 
+
+volumes: 
+    database_website_scrapper:
