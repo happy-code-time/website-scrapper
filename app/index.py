@@ -19,7 +19,7 @@ for i in kwargs.keys():
 
 scrapperWebsiteLinks = ScrapperWebsiteLinks(
     kwargs['execute-callback'],
-    kwargs['start'],
-    kwargs['max'],
+    int(kwargs['start']),
+    int(kwargs['max']),
 );
 scrapperWebsiteLinks.init();
