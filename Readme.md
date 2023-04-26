@@ -31,6 +31,25 @@ Required programms to be installed locally:
     # Execute the callback method/function defined inside the "ws_root" table (from "db" database) in the column "function_type"
     python index.py execute-callback=1
 
+    # To start at some loop index you can add the keyword argument "start" to the command with the index number (start at 0)
+    # For example start=50, the main loop will be executed from the entry/row-id 50
+    python index.py start=50 execute-callback=1
+
+    # To set a max result count you can provide the keyword "max" to the command
+    # For example max=1, so the loop will executed just 1 child loop
+    python index.py max=1 start=50 execute-callback=1
+
+## Arguments
+
+
+- execute-callback
+    - Execute the "function_type" - callback defined in the "ws_root" table inside the mysql database
+- start
+    - Define a children start count executed for each root item.
+- max
+    - Define a max loop count for each children for each root entry.
+
+
 ## Services
 
 Open your browser to view the saved result inside the database. 

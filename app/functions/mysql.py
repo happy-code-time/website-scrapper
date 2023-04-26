@@ -86,7 +86,7 @@ def getUrlTargets():
     return targetItems;
 
 def getTargetWithEmptyContent(root_id):
-    return executeQuerySelect(f"SELECT * FROM ws_target WHERE block = 0 AND ws_root = {root_id} AND content = NULL;");
+    return executeQuerySelect(f"SELECT * FROM ws_target WHERE block = 0 AND ws_root = {root_id} AND content IS NULL;");
 
 def saveWebsitesContent(target_id, base64Code):
     executeQueryWithCommit(f'UPDATE ws_target SET `content` = "{base64Code}" WHERE id = {target_id}');

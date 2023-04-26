@@ -11,9 +11,11 @@ from functions.getFirstLinks import getFirstLinks
 from functions.insertNewDomainLinks import insertNewDomainLinks;
 
 class ScrapperWebsiteLinks:
-    def __init__(self, executeCallback):
+    def __init__(self, executeCallback, start, end):
         self.sleepTimeCount = 0;
         self.executeCallback = '1' == executeCallback;
+        self.start = start;
+        self.end = end;
     #
     # Run
     #
@@ -45,18 +47,12 @@ class ScrapperWebsiteLinks:
                 #
                 if 0 == len(links):
                     printer(f'No childrens available for root domain: {root_domain}', 'error')
-                    continue;
-                else:
-                    #
-                    # First childrens childrens found inside the root page, so make recursion
-                    #
-                    return self.init(loop);
             #
             # Main loop init
             #
             if 0 != len(childrens):
                 sys.setrecursionlimit(len(childrens)*2);
-                self.startLoop(root, childrens)
+                self.startLoop(root, childrens, self.start)
             #
             # If some links has been token from an website
             # during the request, get it
@@ -74,12 +70,17 @@ class ScrapperWebsiteLinks:
             else:
                 printer(f'Successfully runned website grabbing for: {root_domain}')
 
-    def startLoop(self, root, childrens):
-        currentLoopCount = 0;
+    def startLoop(self, root, childrens, start = 0):
+        currentLoopCount = start;
         max = len(childrens);
 
-        while currentLoopCount <= max:
-            self.loopChildrens(root, childrens[currentLoopCount], currentLoopCount, max)
+        if 0 != self.end:
+            max = start + self.end;
+
+        maxCountToDisplay = (max-1);
+
+        while currentLoopCount < max:
+            self.loopChildrens(root, childrens[currentLoopCount], currentLoopCount, maxCountToDisplay)
             self.sleepTimeCount += 1;
             currentLoopCount += 1
 
@@ -110,7 +111,6 @@ class ScrapperWebsiteLinks:
     def loopChildrens(self, root, child, current, max):
         id = child[0];
         website = child[2];
-        root_callback = root[3]
         website_content = child[4];
         HtmlFromRequest = '';
         matched = False;
@@ -139,32 +139,7 @@ class ScrapperWebsiteLinks:
         
         soup = BeautifulSoup(HtmlFromRequest, "html.parser")
         insertNewDomainLinks(root, soup);
-
-        if True == self.executeCallback:
-            if hasattr(ScrapperWebsiteLinks, root_callback) and callable(getattr(ScrapperWebsiteLinks, root_callback)):
-                self.executeUserCallback(root_callback, root, child, soup);
-            else:
-                printer(f'Callback function not found in current context class {ScrapperWebsiteLinks}.', 'error');
-        else:
-            printer('User callback turned off. Making next website request.')
         #
         # Random sleep mechanism
         #
         self.sleep();
-    #
-    # Execute user callback function
-    #
-    def executeUserCallback(self, method, root, child, soup):
-        getattr(self, method)(root, child, soup);
-
-    # -------------------------------------------------------------------------------------------
-    # -------------------------------------------------------------------------------------------
-    # User defined callbacks
-    # -------------------------------------------------------------------------------------------
-    # -------------------------------------------------------------------------------------------
-    def callback(self, root, child, soup):
-        '''
-        Hi there. Your custom callback functions comes here.
-        Happy coding.
-        '''
-        printer('Custom user callback has been executed.')

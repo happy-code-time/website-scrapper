@@ -5,6 +5,8 @@ sysArgv = sys.argv;
 
 kwargs = {
     'execute-callback': '0',
+    'start': 0,
+    'max': 0,
 };
 
 for i in kwargs.keys():
@@ -16,6 +18,8 @@ for i in kwargs.keys():
             kwargs[x[0]] = x[1];
 
 scrapperWebsiteLinks = ScrapperWebsiteLinks(
-    kwargs['execute-callback']
+    kwargs['execute-callback'],
+    kwargs['start'],
+    kwargs['max'],
 );
 scrapperWebsiteLinks.init();
