@@ -1,6 +1,3 @@
-#
-# Types source token from: https://www.iana.org/assignments/media-types/media-types.xhtml
-#
 from extensions.getAvailableExtensions import getAvailableExtensions
 
 def isLinkAFile(link):

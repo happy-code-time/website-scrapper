@@ -12,10 +12,10 @@ from functions.insertNewDomainLinks import insertNewDomainLinks;
 
 class ScrapperWebsiteLinks:
     def __init__(self, executeCallback, start, end):
-        self.sleepTimeCount = 0;
         self.executeCallback = '1' == executeCallback;
         self.start = start;
         self.end = end;
+        self.sleepTimeCount = 0;
     #
     # Run
     #
@@ -47,6 +47,12 @@ class ScrapperWebsiteLinks:
                 #
                 if 0 == len(links):
                     printer(f'No childrens available for root domain: {root_domain}', 'error')
+                    continue;
+                else:
+                    #
+                    # First childrens childrens found inside the root page, so make recursion
+                    #
+                    return self.init(loop);
             #
             # Main loop init
             #
@@ -111,6 +117,7 @@ class ScrapperWebsiteLinks:
     def loopChildrens(self, root, child, current, max):
         id = child[0];
         website = child[2];
+        root_callback = root[3]
         website_content = child[4];
         HtmlFromRequest = '';
         matched = False;
@@ -124,7 +131,7 @@ class ScrapperWebsiteLinks:
             printer(f'Converting from base64 back into HTML', 'magenta');
             self.sleepTimeCount = -1;
             matched = True
-        
+
         if False == matched:
             printer(f'Url request', 'cyan');
             response = requests.get(website);
@@ -136,10 +143,35 @@ class ScrapperWebsiteLinks:
             else:
                 printer('Response status is invalid.', 'error');
                 return blockTarget(id);
-        
+
         soup = BeautifulSoup(HtmlFromRequest, "html.parser")
         insertNewDomainLinks(root, soup);
+
+        if True == self.executeCallback:
+            if hasattr(ScrapperWebsiteLinks, root_callback) and callable(getattr(ScrapperWebsiteLinks, root_callback)):
+                self.executeUserCallback(root_callback, root, child, soup);
+            else:
+                printer(f'Callback function not found in current context class {ScrapperWebsiteLinks}.', 'error');
+        else:
+            printer('User callback turned off. Making next website request.')
         #
         # Random sleep mechanism
         #
         self.sleep();
+    #
+    # Execute user callback function
+    #
+    def executeUserCallback(self, method, root, child, soup):
+        getattr(self, method)(root, child, soup);
+
+    # -------------------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------------
+    # User defined callbacks
+    # -------------------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------------------
+    def callback(self, root, child, soup):
+        '''
+        Hi there. Your custom callback functions comes here.
+        Happy coding.
+        '''
+        printer('Custom user callback has been executed.')

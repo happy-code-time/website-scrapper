@@ -1,5 +1,8 @@
 from functools import lru_cache
 
+#
+# Types source token from: https://www.iana.org/assignments/media-types/media-types.xhtml
+#
 @lru_cache(None)
 def getAvailableExtensions():
     return [

@@ -1,5 +1,4 @@
-import requests
-from bs4 import BeautifulSoup
+import sys
 from functions.printer import printer
 from functions.replaceDomainNameWithEmptyString import replaceDomainNameWithEmptyString 
 from functions.isInternalLink import isInternalLink 
@@ -10,10 +9,16 @@ from functions.mysql import executeQuerySelect, executeQueryWithCommit
 from functions.request import request;
 
 def insertNewDomainLinks(root, soup):
+    http = 'http://www.'
+    https = 'https://www.'
     root_id = root[0]
     root_domain = root[1]
     all_tags_a = soup.find_all('a')
     validDomainLinks = [];
+    
+    if root_domain[0:len(http)] != http and root_domain[0:len(https)] != https:
+        printer('Root domain does not include a valid protocol https/http. All urls should be full qualified urls and start with https://www or http://www', 'error');
+        sys.exit();
 
     for a in all_tags_a:
         href = replaceDomainNameWithEmptyString(root_domain, a['href'])
